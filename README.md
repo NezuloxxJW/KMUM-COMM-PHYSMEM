@@ -1,4 +1,4 @@
-# KMUM-COMM-RPM
+# KMUM-COMM-PHYSMEM
 Kernel mode communication from usermode using physical memory.  
 This works for signed, test-signed and manual mapped kernel drivers.
 
