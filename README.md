@@ -1,5 +1,5 @@
 # KMUM-COMM-PHYSMEM
-Kernel mode communication from usermode using physical memory.  
+Kernel mode communication with usermode using physical memory.  
 This works for signed, test-signed and manual mapped kernel drivers.
 
 ---
@@ -13,7 +13,7 @@ Released soon.
 
 Managed structure in C++ will always link to the next variable.  
 From that, we can send the struct base address (virtual, since usermode) to the kernelmode.  
-Kernelmode will translate the virtual address (to avoid any hooked function from Anti-Cheat) into physical.  
+Kernelmode will translate the virtual address into physical.  
 Then it will use `MmCopyMemory` with the physical flag to read the command requested by usermode.
 
 ---
