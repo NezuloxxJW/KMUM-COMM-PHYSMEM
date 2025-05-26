@@ -1,21 +1,21 @@
 #include "kernel.h"
 
 // Waiting for the kernel mode response
-int WkernelResponse() {
-    while (!comm.KMresponse.end == true) { Sleep(10); }
-    comm.KMresponse.end = false;
+int waitKernelResponse() {
+    while (!comm.kmResponse.end == true) { Sleep(10); }
+    comm.kmResponse.end = false;
 
-    return comm.KMresponse.status;
+    return comm.kmResponse.status;
 }
 
 // initialisation for the communication with kernel mode
 bool initCommunication() {
     // Way to send data to kernel mode
-    if (!WriteRegistryDword(HKEY_LOCAL_MACHINE, L"", L"oPid", GetCurrentProcessId())) { return false; }
-    if (!WriteRegistryQword(HKEY_LOCAL_MACHINE, L"", L"oAddr", reinterpret_cast<DWORD_PTR>(&comm))) { return false; }
+    if (!writeRegistryDword(HKEY_LOCAL_MACHINE, L"", L"oPid", GetCurrentProcessId())) { return false; }
+    if (!writeRegistryQword(HKEY_LOCAL_MACHINE, L"", L"oAddr", reinterpret_cast<DWORD_PTR>(&comm))) { return false; }
 
     // Waiting for the kernel mode response
-    if (WkernelResponse() != 0) { return false; }
+    if (waitKernelResponse() != 0) { return false; }
 
     return true;
 }
@@ -23,6 +23,6 @@ bool initCommunication() {
 void exit() {
     comm.fct = 420;
 
-    WkernelResponse();
+    waitKernelResponse();
     std::cout << "[+] Goodbye kernel !" << std::endl;
 }

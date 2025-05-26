@@ -1,5 +1,5 @@
 #include "includes.h"
 
-bool WriteRegistryDword(HKEY hKeyRoot, LPCWSTR SubKey, LPCWSTR ValueName, DWORD Data);
-bool WriteRegistryQword(HKEY hKeyRoot, LPCWSTR SubKey, LPCWSTR ValueName, DWORD_PTR Data);
-bool CleanRegistry();
+bool writeRegistryDword(HKEY hKeyRoot, LPCWSTR subKey, LPCWSTR valueName, DWORD data);
+bool writeRegistryQword(HKEY hKeyRoot, LPCWSTR subKey, LPCWSTR valueName, DWORD_PTR data);
+bool cleanRegistry();

@@ -1,7 +1,7 @@
 #include "structs.h"
 #include "registry.h"
 
-int WkernelResponse();
+int waitKernelResponse();
 bool initCommunication();
 
 // read template
@@ -11,9 +11,9 @@ T read(uintptr_t addr) {
     comm.addr = addr;
     comm.size = sizeof(T);
 
-    if (WkernelResponse() != 0) { return -1; }
+    if (waitKernelResponse() != 0) { return -1; }
 
-    T rtn = *(T*)&comm.KMresponse.buffer;
+    T rtn = *(T*)&comm.kmResponse.buffer;
     return rtn;
 }
 
@@ -25,7 +25,7 @@ void write(uintptr_t addr, T value) {
     comm.value = value;
     comm.size = sizeof(T);
 
-    WkernelResponse();
+    waitKernelResponse();
 }
 
 void exit();

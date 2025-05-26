@@ -6,7 +6,7 @@
 
 namespace usermode {
     void updateAddr() {
-        //cAddr
+        //cAddr -> usermode communication struct base address
         cAddr.pFct = oAddr;
         cAddr.pPid = cAddr.pFct + sizeof(int);
         cAddr.pAddr = cAddr.pPid + sizeof(int);
@@ -14,32 +14,30 @@ namespace usermode {
         cAddr.pValue = cAddr.pSize + sizeof(SIZE_T);
         cAddr.pKM = cAddr.pValue + sizeof(ULONGLONG);
         cAddr.pEnd = cAddr.pKM + sizeof(response);
-        //rAddr
+        //rAddr -> usermode response struct base address
         rAddr.pBuff = cAddr.pKM;
         rAddr.pStatus = rAddr.pBuff + sizeof(ULONGLONG);
         rAddr.pEnd = rAddr.pStatus + sizeof(int);
     }
 
-    // read whole UM structure (otherwise you'll have 2/3 read usermode before executing the one for the game)
+    // read whole UM structure
     void readRequest() {
-        SIZE_T WByte;
-        int Request = 0;
+        SIZE_T wByte;
 
         NTSTATUS status = ReadProcessMemory(
             (HANDLE)oPid,
             reinterpret_cast<PVOID>(cAddr.pFct),
             &comm,
             sizeof(comm),
-            &WByte
+            &wByte
         );
-        if (!NT_SUCCESS(status)) { return; }
 
         return;
     }
 
     template <typename T>
     T read(uintptr_t address) {
-        SIZE_T WByte;
+        SIZE_T wByte;
         T value;
 
         NTSTATUS status = ReadProcessMemory(
@@ -47,67 +45,67 @@ namespace usermode {
             reinterpret_cast<PVOID>(address),
             &value,
             sizeof(T),
-            &WByte
+            &wByte
         );
         if (!NT_SUCCESS(status)) { return NULL; }
 
         return value;
     }
 
-    void ReadGPid() {
-        SIZE_T WByte;
-        int GamePid = 0;
+    void readGpid() {
+        SIZE_T wByte;
+        int gamePid = 0;
 
-        while (GamePid == 0) {
+        while (gamePid == 0) {
             NTSTATUS status = ReadProcessMemory(
                 reinterpret_cast<HANDLE>(oPid),
                 reinterpret_cast<PVOID>(cAddr.pPid),
-                &GamePid,
+                &gamePid,
                 sizeof(int),
-                &WByte
+                &wByte
             );
 
             delay(10);
         }
-        gPid = GamePid;
+        gPid = gamePid;
     }
 
     // send buffer to UM
     NTSTATUS sendBuffer(PVOID value) {
-        SIZE_T WByte;
+        SIZE_T wByte;
         NTSTATUS status = WriteProcessMemory(
             reinterpret_cast<HANDLE>(oPid),
             reinterpret_cast<PVOID>(rAddr.pBuff),
             &value,
             sizeof(read<size_t>(cAddr.pSize)),
-            &WByte
+            &wByte
         );
 
         return status;
     };
 
-    // end KMresponse for UM
+    // send end to UM
     NTSTATUS end(bool end = true) {
-        SIZE_T WByte;
+        SIZE_T wByte;
         NTSTATUS status = WriteProcessMemory(
             reinterpret_cast<HANDLE>(oPid),
             reinterpret_cast<PVOID>(rAddr.pEnd),
             &end,
             sizeof(bool),
-            &WByte
+            &wByte
         );
 
         return status;
     }
 
     // Connection initlisation with usermode
-    NTSTATUS InitializeCommunication() {
-        NTSTATUS status = ReadRegistryADDR();
+    NTSTATUS initializeCommunication() {
+        NTSTATUS status = readAddressFromRegistry();
         if (!NT_SUCCESS(status)) {
             DbgPrint("Failed to read Addr from registry\n");
             return status;
         }
-        status = ReadRegistryPID();
+        status = readPidFromRegistry();
         if (!NT_SUCCESS(status)) {
             DbgPrint("Failed to read PID from registry\n");
             return status;
@@ -115,7 +113,7 @@ namespace usermode {
 
         usermode::updateAddr();
         status = usermode::end();
-        usermode::ReadGPid();
+        usermode::readGpid();
         return status;
     }
 
@@ -127,7 +125,7 @@ namespace usermode {
 
 namespace game {
     NTSTATUS read() {
-        SIZE_T WByte;
+        SIZE_T wByte;
         PVOID value = 0;
         
         NTSTATUS status = ReadProcessMemory(
@@ -135,20 +133,18 @@ namespace game {
             reinterpret_cast<PVOID>(comm.addr),
             &value,
             comm.size,
-            &WByte
+            &wByte
         );
         if (!NT_SUCCESS(status)) { return status; }
 
-        status = usermode::sendBuffer(value);
+	status = usermode::sendBuffer(value);
         if (!NT_SUCCESS(status)) { return status; }
 
-        status = usermode::end();
-
-        return status;
+        return usermode::end();
     };
 
     NTSTATUS write() {
-        SIZE_T WByte;
+        SIZE_T wByte;
         PVOID value = reinterpret_cast<PVOID>(comm.value);
 
         NTSTATUS status = WriteProcessMemory(
@@ -156,13 +152,11 @@ namespace game {
             reinterpret_cast<PVOID>(comm.addr),
             &value,
             comm.size,
-            &WByte
+            &wByte
         );
         if (!NT_SUCCESS(status)) { return status; }
 
-        status = usermode::end();
-
-        return status;
+        return usermode::end();
     };
 }
 

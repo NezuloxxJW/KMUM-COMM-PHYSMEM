@@ -33,7 +33,7 @@ struct communication
     uintptr_t addr;
     SIZE_T size;
     ULONGLONG value;
-    response KMresponse;
+    response kmResponse;
     bool end;
 };
 

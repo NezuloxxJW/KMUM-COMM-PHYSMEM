@@ -1,7 +1,7 @@
 #pragma once
 #include "driver.h"
 
-int oPid;
-uintptr_t oAddr;
+int oPid; // overlay/usermode process ID
+uintptr_t oAddr; // overlay/usermode base struct address
 
-int gPid;
+int gPid; // game process ID

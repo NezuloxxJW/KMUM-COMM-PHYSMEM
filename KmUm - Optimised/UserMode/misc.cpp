@@ -5,7 +5,7 @@ float randomFloat()
     return (float)(rand()) / (float)(rand());
 }
 
-int getprocessid(const wchar_t* process_name) {
+int getProcessid(const wchar_t* process_name) {
     PROCESSENTRY32 processentry;
     HANDLE snapshot_handle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 

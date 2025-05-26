@@ -2,4 +2,4 @@
 #include <TlHelp32.h>
 
 float randomFloat();
-int getprocessid(const wchar_t* process_name);
+int getProcessid(const wchar_t* process_name);

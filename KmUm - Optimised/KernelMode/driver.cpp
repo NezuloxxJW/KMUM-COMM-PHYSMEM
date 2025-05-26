@@ -3,14 +3,14 @@
 
 // redirect request
 NTSTATUS main() {
-    bool UMalive = true;
+    bool isRunning = true;
 
-    while (UMalive) {
+    while (isRunning) {
         usermode::readRequest();
         switch (comm.fct){
         case 10: game::read(); break;
         case 20: game::write(); break;
-        case 420: usermode::exit(); UMalive = false; break;
+        case 420: usermode::exit(); isRunning = false; break;
         }
 
         delay(10);
@@ -19,11 +19,11 @@ NTSTATUS main() {
     return STATUS_SUCCESS;
 }
 
-NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath)
+NTSTATUS DriverEntry(PDRIVER_OBJECT driverObject, PUNICODE_STRING registryPath)
 {
-    UNREFERENCED_PARAMETER(DriverObject); UNREFERENCED_PARAMETER(RegistryPath);
+    UNREFERENCED_PARAMETER(driverObject); UNREFERENCED_PARAMETER(registryPath);
 
-    if (!NT_SUCCESS(usermode::InitializeCommunication())) { return STATUS_ABANDONED; }
+    if (!NT_SUCCESS(usermode::initializeCommunication())) { return STATUS_ABANDONED; }
 
     return main();
 }

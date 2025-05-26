@@ -1,18 +1,18 @@
 #include "registry.h"
 
-bool WriteRegistryDword(HKEY hKeyRoot, LPCWSTR SubKey, LPCWSTR ValueName, DWORD Data) {
+bool writeRegistryDword(HKEY hKeyRoot, LPCWSTR subKey, LPCWSTR valueName, DWORD data) {
     HKEY hKey;
     LONG result;
 
-    result = RegOpenKeyEx(hKeyRoot, SubKey, 0, KEY_WRITE, &hKey);
+    result = RegOpenKeyEx(hKeyRoot, subKey, 0, KEY_WRITE, &hKey);
     if (result != ERROR_SUCCESS) {
-        std::wcerr << L"Failed to open registry key: " << SubKey << std::endl;
+        std::wcerr << L"Failed to open registry key: " << subKey << std::endl;
         return false;
     }
 
-    result = RegSetValueEx(hKey, ValueName, 0, REG_DWORD, reinterpret_cast<const BYTE*>(&Data), sizeof(Data));
+    result = RegSetValueEx(hKey, valueName, 0, REG_DWORD, reinterpret_cast<const BYTE*>(&data), sizeof(data));
     if (result != ERROR_SUCCESS) {
-        std::wcerr << L"Failed to write DWORD to registry: " << ValueName << std::endl;
+        std::wcerr << L"Failed to write DWORD to registry: " << valueName << std::endl;
         RegCloseKey(hKey);
         return false;
     }
@@ -21,19 +21,19 @@ bool WriteRegistryDword(HKEY hKeyRoot, LPCWSTR SubKey, LPCWSTR ValueName, DWORD 
     return true;
 }
 
-bool WriteRegistryQword(HKEY hKeyRoot, LPCWSTR SubKey, LPCWSTR ValueName, DWORD_PTR Data) {
+bool writeRegistryQword(HKEY hKeyRoot, LPCWSTR subKey, LPCWSTR valueName, DWORD_PTR data) {
     HKEY hKey;
     LONG result;
 
-    result = RegOpenKeyEx(hKeyRoot, SubKey, 0, KEY_WRITE, &hKey);
+    result = RegOpenKeyEx(hKeyRoot, subKey, 0, KEY_WRITE, &hKey);
     if (result != ERROR_SUCCESS) {
-        std::wcerr << L"Failed to open registry key: " << SubKey << std::endl;
+        std::wcerr << L"Failed to open registry key: " << subKey << std::endl;
         return false;
     }
 
-    result = RegSetValueEx(hKey, ValueName, 0, REG_QWORD, reinterpret_cast<const BYTE*>(&Data), sizeof(Data));
+    result = RegSetValueEx(hKey, valueName, 0, REG_QWORD, reinterpret_cast<const BYTE*>(&data), sizeof(data));
     if (result != ERROR_SUCCESS) {
-        std::wcerr << L"Failed to write QWORD to registry: " << ValueName << std::endl;
+        std::wcerr << L"Failed to write QWORD to registry: " << valueName << std::endl;
         RegCloseKey(hKey);
         return false;
     }
@@ -42,7 +42,7 @@ bool WriteRegistryQword(HKEY hKeyRoot, LPCWSTR SubKey, LPCWSTR ValueName, DWORD_
     return true;
 }
 
-bool CleanRegistry() {
+bool cleanRegistry() {
     HKEY hKey;
     LONG result;
 
