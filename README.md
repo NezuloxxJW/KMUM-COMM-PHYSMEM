@@ -13,9 +13,10 @@
 Utilizes contiguous memory structures in C++ where sequential variables maintain predictable offsets.  
 
 **Workflow**:  
-1. User-mode sends virtual base address of structure  
-2. Kernel translates virtual → physical address  
+1. User-mode sends virtual base address of structure via Registry
+2. Kernel get and translates virtual → physical address  
 3. `MmCopyMemory` with `PHYSICAL` flag safely accesses physical memory
+4. Execute request
 
 ---
 
